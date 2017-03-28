@@ -95,14 +95,14 @@ def process_frame(image, svc, X_scaler, scale, y_start_stop, heatmap):
     # searchlib.find_cars(image, y_start_stop[0]+50, y_start_stop[1], scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins, bboxes)
     # searchlib.find_cars(image, y_start_stop[0], y_start_stop[0]+100, scale/1.5, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins, bboxes)
     # searchlib.find_cars(image, 550, 700, scale * 1.33333, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins, bboxes)
-    searchlib.find_cars(image, y_start_stop[0], y_start_stop[1], scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins, bboxes)
-    searchlib.find_cars(image, y_start_stop[0], y_start_stop[1], scale * 1.333333, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins, bboxes)
-    searchlib.find_cars(image, y_start_stop[0], y_start_stop[1], scale * 2, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins, bboxes)
+    # searchlib.find_cars(image, y_start_stop[0], y_start_stop[1], scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins, bboxes)
+    searchlib.find_cars(image, y_start_stop[0], y_start_stop[1], scale * 1, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins, bboxes)
+    # searchlib.find_cars(image, y_start_stop[0], y_start_stop[1], scale * 2, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins, bboxes)
     draw_image = cv2.cvtColor(image, cv2.COLOR_YCrCb2RGB)
 
     heatmap.add_heat(image, bboxes)
-    #return searchlib.draw_boxes(draw_image, bboxes)
-    return searchlib.draw_labeled_bboxes(draw_image, heatmap.get_labelled_map())
+    return searchlib.draw_boxes(draw_image, bboxes)
+    #return searchlib.draw_labeled_bboxes(draw_image, heatmap.get_labelled_map())
 
 class HeatMap():
     def __init__(self, threshold, count_to_keep):
@@ -137,17 +137,18 @@ def main():
     scale = 1.5
     heatmap = HeatMap(heatmap_threshold, heatmap_count_to_keep)
 
-    # test_files = glob.glob("test_images/*.jpg")
-    # for file in test_files:
-    #     image = lib.read_image_in_colorspace(file, color_space="YCrCb")
+    #test_files = glob.glob("test_images/*.jpg")
+    test_files = glob.glob("test_images/*.png")
+    for file in test_files:
+        image = lib.read_image_in_colorspace(file, color_space="YCrCb")
 
-    #     t4 = time.time()
-    #     out_img = process_frame(image, svc, X_scaler, scale, y_start_stop, heatmap)
-    #     t5 = time.time()
-    #     print("Displaying image.... Press space to exit ", round(t5-t4, 2))
-    #     cv2.imshow('image', cv2.cvtColor(out_img, cv2.COLOR_RGB2BGR))
-    #     cv2.waitKey(0)
-    # return
+        t4 = time.time()
+        out_img = process_frame(image, svc, X_scaler, scale, y_start_stop, heatmap)
+        t5 = time.time()
+        print("Displaying image.... Press space to exit ", round(t5-t4, 2))
+        cv2.imshow('image', cv2.cvtColor(out_img, cv2.COLOR_RGB2BGR))
+        cv2.waitKey(0)
+    return
 
     #test_videos = ['test_video.mp4']
     test_videos = ['project_video.mp4']
@@ -170,7 +171,7 @@ hist_bins = 16    # Number of histogram bins
 spatial_feat = True  # Spatial features on or off
 hist_feat = True  # Histogram features on or off
 hog_feat = True  # HOG features on or off
-svc_C = 1.0
+svc_C = 10.0
 heatmap_count_to_keep = 8
 heatmap_threshold = np.int(1.5 * heatmap_count_to_keep)
 main()
